@@ -30,6 +30,19 @@ const restaurantList = ref<Restaurant[]>([
     }
 ])
 
+const addRestaurant = (payload: Restaurant) => {
+    restaurantList.value.push(payload)
+    hideForm()
+}
+
+const deleteRestaurant = (payload: Restaurant) => {
+    restaurantList.value = restaurantList.value.filter((restaurant: Restaurant) => {
+        return restaurant.id !== payload.id
+    })
+}
+
+const filterText = ref("")
+
 const filteredRestaurantList = computed((): Restaurant[] => {
     return restaurantList.value.filter((restaurant: Restaurant) => {
         if (restaurant.name) {
@@ -43,19 +56,6 @@ const filteredRestaurantList = computed((): Restaurant[] => {
 const numberOfRestaurants = computed((): number => {
     return filteredRestaurantList.value.length
 })
-
-const addRestaurant = (payload: Restaurant) => {
-    restaurantList.value.push(payload)
-    hideForm()
-}
-
-const deleteRestaurant = (payload: Restaurant) => {
-    restaurantList.value = restaurantList.value.filter((restaurant: Restaurant) => {
-        return restaurant.id !== payload.id
-    })
-}
-
-const filterText = ref("")
 
 const showNewForm = ref<boolean>(false)
 
