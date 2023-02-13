@@ -5,50 +5,29 @@ import DishCard from "../components/DishCard.vue"
 import SideMenu from "../components/SideMenu.vue"
 import type { Dish } from "@/types"
 import { useRoute } from "vue-router"
+import { useDishesStore } from "@/stores/DishesStore"
 
-const dishList = ref<Dish[]>([
-    {
-        id: "7d9f3f17-964a-4e82-98e5-ecbba4d709a1",
-        name: "Ghost Pepper Poppers",
-        status: "Want to Try"
-    },
-    {
-        id: "5c986b74-fa02-4a22-98f2-b1ff3559e85e",
-        name: "A Little More Chowder Now",
-        status: "Recommended"
-    },
-    {
-        id: "c113411d-1589-414f-a283-daf7eedb631e",
-        name: "Full Laptop Battery",
-        status: "Do Not Recommend"
-    }
-])
+const dishesStore = useDishesStore()
 
 const addDish = (payload: Dish) => {
-    dishList.value.push(payload)
+    dishesStore.addDish(payload)
     hideForm()
 }
 
 const deleteDish = (payload: Dish) => {
-    dishList.value = dishList.value.filter((dish: Dish) => {
-        return dish.id !== payload.id
-    })
+    dishesStore.deleteDish(payload)
 }
 
 const filterText = ref<string>("")
 
 const filteredDishList = computed((): Dish[] => {
-    return dishList.value.filter((dish) => {
+    return dishesStore.list.filter((dish) => {
         if (dish.name) {
             return dish.name.toLowerCase().includes(filterText.value.toLowerCase())
         } else {
-            return dishList.value
+            return dishesStore.list
         }
     })
-})
-
-const numberOfDishes = computed((): number => {
-    return filteredDishList.value.length
 })
 
 const showNewForm = ref<boolean>(false)
@@ -84,7 +63,7 @@ onMounted(() => {
                     <div class="level-left">
                         <div class="level-item">
                             <p class="subtitle is-5">
-                                <strong>{{ numberOfDishes }}</strong> dishes
+                                <strong>{{ dishesStore.numberOfDishes }}</strong> dishes
                             </p>
                         </div>
 
