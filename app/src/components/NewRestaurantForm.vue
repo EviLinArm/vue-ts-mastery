@@ -1,10 +1,15 @@
 <script setup lang="ts">
-import { ref } from "vue"
+import { onMounted, ref } from "vue"
 import { v4 as uuidv4 } from "uuid"
 import type { Restaurant } from "@/types"
 import { restaurantStatusList } from "@/constants"
 
-const emit = defineEmits(["add-new-restaurant", "cancel-new-restaurant"])
+const emit = defineEmits<{
+    (e: "add-new-restaurant", restaurant: Restaurant): void
+    (e: "cancel-new-restaurant"): void
+}>()
+
+const elNameInput = ref<HTMLInputElement | null>(null)
 
 const newRestaurant = ref<Restaurant>({
     id: uuidv4(),
@@ -13,13 +18,29 @@ const newRestaurant = ref<Restaurant>({
     website: "",
     status: "Want to Try"
 })
+
+const addRestaurant = () => {
+    emit("add-new-restaurant", newRestaurant.value)
+}
+
+const cancelNewRestaurant = () => {
+    emit("cancel-new-restaurant")
+}
+
+const updateName = (e: InputEvent) => {
+    newRestaurant.value.name = (e.target as HTMLInputElement).value
+}
+
+onMounted(() => {
+    elNameInput.value?.focus()
+})
 </script>
 
 <template>
     <form @submit.prevent>
         <div class="field">
             <div class="field">
-                <label for="name" class="label">Name</label>
+                <label for="name" class="label">Name: {{ newRestaurant.name }}</label>
                 <div class="control">
                     <input
                         :value="newRestaurant.name"
@@ -55,9 +76,8 @@ const newRestaurant = ref<Restaurant>({
             </div>
             <div class="field">
                 <div class="buttons">
-                    <button @click="$emit('add-new-restaurant', newRestaurant)" class="button is-success">Create
-                    </button>
-                    <button @click="$emit('cancel-new-restaurant')" class="button is-light">Cancel</button>
+                    <button @click="addRestaurant" class="button is-success">Create</button>
+                    <button @click="cancelNewRestaurant" class="button is-light">Cancel</button>
                 </div>
             </div>
         </div>
